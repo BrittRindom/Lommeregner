@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hvilket tal ...?</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+        }
+        .calculator-section {
+            border: 2px solid #0073e6;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            background-color: #f0f8ff;
+        }
+        .calculator-section h2 {
+            margin-top: 0;
+            color: #0073e6;
+        }
+        .result-box {
+            font-weight: bold;
+            color: #d32f2f;
+        }
+    </style>
+    <script>
+        function numberToWords(n) {
+            if (isNaN(n) || n < 0) return "Ugyldigt input";
+            const ones = ["nul", "en", "to", "tre", "fire", "fem", "seks", "syv", "otte", "ni"];
+            const teens = ["ti", "elleve", "tolv", "tretten", "fjorten", "femten", "seksten", "sytten", "atten", "nitten"];
+            const tens = ["", "", "tyve", "tredive", "fyrre", "halvtreds", "tres", "halvfjerds", "firs", "halvfems"];
+            
+            if (n < 10) return ones[n];
+            if (n < 20) return teens[n - 10];
+            if (n < 100) return tens[Math.floor(n / 10)] + (n % 10 !== 0 ? " " + ones[n % 10] : "");
+            if (n < 1000) return ones[Math.floor(n / 100)] + " hundrede" + (n % 100 !== 0 ? " og " + numberToWords(n % 100) : "");
+            if (n < 10000) return ones[Math.floor(n / 1000)] + " tusinde" + (n % 1000 !== 0 ? " " + numberToWords(n % 1000) : "");
+            return "Tallet er for stort";
+        }
+
+        function calculate() {
+            let expression = document.getElementById("input").value;
+            try {
+                let result = eval(expression);
+                document.getElementById("output").innerText = result;
+                document.getElementById("words").innerText = numberToWords(result);
+            } catch (e) {
+                document.getElementById("output").innerText = "Fejl";
+                document.getElementById("words").innerText = "";
+            }
+        }
+
+        function findMissingNumber() {
+            let number1 = parseFloat(document.getElementById("number1").value);
+            let operator = document.getElementById("operator").value;
+            let result = parseFloat(document.getElementById("result").value);
+            let missingNumber;
+            
+            if (operator === "+") {
+                missingNumber = result - number1;
+            } else if (operator === "-") {
+                missingNumber = number1 - result;
+            } else if (operator === "*") {
+                missingNumber = result / number1;
+            } else if (operator === "/") {
+                missingNumber = number1 / result;
+            }
+            
+            document.getElementById("missingOutput").innerText = missingNumber;
+            document.getElementById("missingWords").innerText = numberToWords(missingNumber);
+        }
+    </script>
+</head>
+<body>
+    <div class="calculator-section">
+        <h2>Regnestykke → Resultat</h2>
+        <input type="text" id="input" placeholder="Indtast beregning (f.eks. 25+75)">
+        <button onclick="calculate()">Beregn</button>
+        <h3>Resultat: <span class="result-box" id="output"></span></h3>
+        <h3>Tal i ord: <span class="result-box" id="words"></span></h3>
+    </div>
+    
+    <div class="calculator-section">
+        <h2>Hvilket tal ...?</h2>
+        <p>Hvilket tal skal jeg</p>
+        <select id="operator">
+            <option value="+">plusse</option>
+            <option value="-">trække fra</option>
+            <option value="*">gange</option>
+            <option value="/">dividere</option>
+        </select>
+        <p>med</p>
+        <input type="number" id="number1">
+        <p>for at få</p>
+        <input type="number" id="result">
+        <button onclick="findMissingNumber()">Beregn</button>
+        <h3>Manglende tal: <span class="result-box" id="missingOutput"></span></h3>
+        <h3>Tal i ord: <span class="result-box" id="missingWords"></span></h3>
+    </div>
+</body>
+</html>
